@@ -1,31 +1,39 @@
 #! /usr/bin/python
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
 import pycurl
 import StringIO
 import os
 
 
 
-
-def save_result(s):
-		with open("result.html","w") as fp:
-				fp.write(s)
-		fp.close()			
-
-
 def mailme():
-	import smtplib
+
 	to = 'recepiant@somedomain.com'
 	gmail_user = 'youremail@gmail.com'
 	gmail_pwd = 'password'
+
+	msg = MIMEMultipart('alternative')
+	msg['Subject'] = "Subject:Results S3!"
+	msg['From'] = gmail_user
+	msg['To'] = to
+	text = "S3 Results Published !"
+	html = s
+
+	part1 = MIMEText(text, 'plain')
+	part2 = MIMEText(html, 'html')
+
+
 	smtpserver = smtplib.SMTP("smtp.gmail.com",587)
 	smtpserver.ehlo()
 	smtpserver.starttls()
 	smtpserver.ehlo
 	smtpserver.login(gmail_user, gmail_pwd)
-	header = 'To:' + to + '\n' + 'From: ' + gmail_user + '\n' + 'Subject:Results S3! \n'
-	print header
-	msg = header + '\n Dude , University Results Just pulished for S3 Revaluation.. check it ! \n\n'
-	smtpserver.sendmail(gmail_user, to, msg)
+	msg.attach(part1)
+	msg.attach(part2)
+
+	smtpserver.sendmail(gmail_user, to, msg.as_string())
 	print 'done!'
 	smtpserver.close()
 
@@ -52,9 +60,10 @@ if(slug!=255):
 		if(os.path.isfile("temp1")==True):
 			print("Already Mailed !")
 		else:
-			save_result(s)
 			mailme()
 			os.system("touch temp1")
+else:
+	print("Nothing Yet")
 
 
 buff.close()
